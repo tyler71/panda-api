@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+    qr_image_generator:
+        image: "qr-image-generator"
+        build:
+          context: .
+        ports:
+            - '8080:80'
+        volumes:
+          - './app:/app'
+        restart: unless-stopped
