@@ -4,6 +4,7 @@ services:
     image: "qr-image-generator"
     build:
       context: .
+      target: build
     ports:
         - '8080:80'
     volumes:

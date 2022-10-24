@@ -16,4 +16,9 @@ USER application
 COPY ./app/ /app/
 WORKDIR /app
 
-CMD uvicorn main:app --reload --host 0.0.0.0 --port 80
+CMD uvicorn main:app --host 0.0.0.0 --port 80 --reload
+
+
+FROM build as prod
+
+CMD uvicorn main:app --host 0.0.0.0 --port 80
