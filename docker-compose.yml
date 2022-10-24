@@ -1,11 +1,29 @@
 version: '3.3'
 services:
-    qr_image_generator:
-        image: "qr-image-generator"
-        build:
-          context: .
-        ports:
-            - '8080:80'
-        volumes:
-          - './app:/app'
-        restart: unless-stopped
+  app:
+    image: "qr-image-generator"
+    build:
+      context: .
+    ports:
+        - '8080:80'
+    volumes:
+      - './app:/app'
+    restart: unless-stopped
+    networks:
+      - internal
+  db:
+    image: postgres:15-bullseye
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=app
+    volumes:
+      - "./data/db:/var/lib/postgresql/data"
+    ports:
+      - '50332:5432'
+    restart: unless-stopped
+    networks:
+      - internal
+
+networks:
+  internal:
