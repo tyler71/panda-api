@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   app:
-    image: "qr-image-generator"
+    image: "ghcr.io/tyler71/rest-image-overlay:latest"
     build:
       context: .
       target: build

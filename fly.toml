@@ -12,7 +12,7 @@ processes = []
   auto_rollback = true
 
 [build]
-  image = "ghcr.io/PandaPublishing/Rest-Image-Overlay:latest"
+  image = "ghcr.io/tyler71/rest-image-overlay:latest"
 
 [[services]]
   http_checks = []
