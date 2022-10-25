@@ -20,7 +20,6 @@ RUN pip install --user --no-cache-dir -r /home/application/requirements.txt \
 
 FROM init AS prod
 WORKDIR /app
-
 USER application
 
 COPY --from=build /home/application/.local /home/application/.local
@@ -29,9 +28,13 @@ COPY ./app/ /app/
 CMD uvicorn main:app --host 0.0.0.0 --port 8000
 
 
-FROM prod AS dev
+FROM init AS dev
+WORKDIR /app
+USER application
 
-COPY requirements_dev.txt /home/application/requirements_dev.txt
+COPY --from=build /home/application/.local /home/application/.local
+
+COPY ./requirements_dev.txt /home/application/requirements_dev.txt
 RUN pip install --user --no-cache-dir \
       -r /home/application/requirements_dev.txt
 
