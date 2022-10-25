@@ -1,0 +1,8 @@
+data/
+
+docker-compose.yml
+fly.toml
+justfile
+README.md
+*.txt
+*.swp
