@@ -4,7 +4,7 @@ services:
     image: "ghcr.io/tyler71/rest-image-overlay:latest"
     build:
       context: .
-      target: build
+      target: dev
     ports:
         - '8080:8000'
     volumes:
@@ -12,19 +12,19 @@ services:
     restart: unless-stopped
     networks:
       - internal
-  db:
-    image: postgres:15-bullseye
-    environment:
-      - POSTGRES_USER=app
-      - POSTGRES_PASSWORD=${DB_PASS}
-      - POSTGRES_DB=app
-    volumes:
-      - "./data/db:/var/lib/postgresql/data"
-    ports:
-      - '50332:5432'
-    restart: unless-stopped
-    networks:
-      - internal
+# db:
+#   image: postgres:15-bullseye
+#   environment:
+#     - POSTGRES_USER=app
+#     - POSTGRES_PASSWORD=${DB_PASS}
+#     - POSTGRES_DB=app
+#   volumes:
+#     - "./data/db:/var/lib/postgresql/data"
+#   ports:
+#     - '50332:5432'
+#   restart: unless-stopped
+#   networks:
+#     - internal
 
 networks:
   internal:

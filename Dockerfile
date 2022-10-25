@@ -1,24 +1,38 @@
-FROM python:3.10-slim as build
+FROM python:3.10-slim AS init
+ENV PATH=/home/application/.local/bin:$PATH
 
 RUN useradd application --home-dir /home/application --uid 1000 \
  && mkdir -p /home/application \
  && chown application:application /home/application
 
-RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN /usr/local/bin/python -m pip install --no-cache-dir --upgrade pip
 
-COPY requirements.txt /home/application/requirements.txt
-RUN pip install --no-cache-dir -r /home/application/requirements.txt \
- && rm /home/application/requirements.txt
+
+FROM init AS build
+COPY --from=rust:1-slim /usr/local/cargo/bin/rustup /usr/loca/bin/rustup
 
 USER application
 
+COPY requirements.txt /home/application/requirements.txt
+RUN pip install --user --no-cache-dir -r /home/application/requirements.txt \
+ && rm /home/application/requirements.txt
 
-COPY ./app/ /app/
+
+FROM init AS prod
 WORKDIR /app
 
-CMD uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+USER application
 
-
-FROM build as prod
+COPY --from=build /home/application/.local /home/application/.local
+COPY ./app/ /app/
 
 CMD uvicorn main:app --host 0.0.0.0 --port 8000
+
+
+FROM prod AS dev
+
+COPY requirements_dev.txt /home/application/requirements_dev.txt
+RUN pip install --user --no-cache-dir \
+      -r /home/application/requirements_dev.txt
+
+CMD uvicorn main:app --host 0.0.0.0 --port 8000 --reload
