@@ -31,7 +31,7 @@ async def read_item(item_id: str):
 @app.get("/items2/{item_id}")
 async def read_item(item_id: str):
     if item_id == "foo":
-        return {"id": "foo", "value": "there goes my hero"}
+        return {"id": "foo", "value": "there goes my bero"}
 
 
 @app.put("/items/{item_id}")

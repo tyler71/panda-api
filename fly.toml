@@ -11,12 +11,9 @@ processes = []
   allowed_public_ports = []
   auto_rollback = true
 
-[build]
-  image = "ghcr.io/tyler71/rest-image-overlay:latest"
-
 [[services]]
   http_checks = []
-  internal_port = 8080
+  internal_port = 8000
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
