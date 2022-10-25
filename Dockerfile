@@ -9,13 +9,14 @@ RUN /usr/local/bin/python -m pip install --no-cache-dir --upgrade pip
 
 
 FROM init AS build
+
+# For orjson
 COPY --from=rust:1-slim /usr/local/cargo/bin/rustup /usr/loca/bin/rustup
 
 USER application
 
 COPY requirements.txt /home/application/requirements.txt
-RUN pip install --user --no-cache-dir -r /home/application/requirements.txt \
- && rm /home/application/requirements.txt
+RUN pip install --user --no-cache-dir -r /home/application/requirements.txt
 
 
 FROM init AS prod
