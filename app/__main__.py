@@ -8,7 +8,7 @@ if __name__ == "__main__":
     server_config = uvicorn.Config(
         app="main:app",
         host=os.getenv("HOST", "0.0.0.0"),
-        port=os.getenv("PORT", 8000),
+        port=int(os.getenv("PORT", 8000)),
         reload=debug_mode,
         reload_dirs=reload_dirs,
     )
