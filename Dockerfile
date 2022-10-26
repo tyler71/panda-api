@@ -26,10 +26,11 @@ USER application
 COPY --from=build /home/application/.local /home/application/.local
 COPY ./app/ /app/
 
-CMD uvicorn main:app --host 0.0.0.0 --port 8000
+CMD python main.py
 
 
 FROM init AS dev
+ENV DEBUG=True
 WORKDIR /app
 USER application
 
@@ -39,4 +40,4 @@ COPY ./requirements_dev.txt /home/application/requirements_dev.txt
 RUN pip install --user --no-cache-dir \
       -r /home/application/requirements_dev.txt
 
-CMD uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+CMD python main.py

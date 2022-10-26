@@ -2,7 +2,7 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Remote Python 3.10.8 Docker (ghcr.io/tyler71/rest-image-overlay:latest)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Remote Python 3.10.8 Docker Compose (app at [/home/z/Dev/development/pandapublishing/rest-image-overlay/docker-compose.yml]) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

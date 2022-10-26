@@ -10,6 +10,13 @@
             </list>
           </settings>
         </remote-mappings>
+        <remote-mappings server-id="python@docker-compose://[/home/z/Dev/development/pandapublishing/rest-image-overlay/docker-compose.yml]:app/python">
+          <settings>
+            <list>
+              <mapping local-root="./app" remote-root="/app" />
+            </list>
+          </settings>
+        </remote-mappings>
       </list>
     </list>
   </component>

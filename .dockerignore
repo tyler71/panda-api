@@ -5,3 +5,4 @@ fly.toml
 justfile
 README.md
 *.swp
+/data/
