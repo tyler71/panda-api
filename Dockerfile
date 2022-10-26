@@ -26,7 +26,7 @@ USER application
 COPY --from=build /home/application/.local /home/application/.local
 COPY ./app/ /app/
 
-CMD python main.py
+CMD python __main__.py
 
 
 FROM init AS dev
@@ -40,4 +40,4 @@ COPY ./requirements_dev.txt /home/application/requirements_dev.txt
 RUN pip install --user --no-cache-dir \
       -r /home/application/requirements_dev.txt
 
-CMD python main.py
+CMD python __main__.py
