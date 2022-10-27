@@ -1,14 +1,17 @@
-import os
+from os import getenv
+
 import uvicorn
 
 if __name__ == "__main__":
-    debug_mode = True if os.getenv("DEBUG", False) == "True" else False
-    reload_dirs = os.getenv("RELOAD_DIRS", "/app").split(' ')
+    host = getenv("HOST", "0.0.0.0")
+    debug_mode = True if getenv("DEBUG", False) == "True" else False
+    port = int(getenv("PORT", 8000))
+    reload_dirs = getenv("RELOAD_DIRS", "/app").split(' ')
 
     server_config = uvicorn.Config(
         app="main:app",
-        host=os.getenv("HOST", "0.0.0.0"),
-        port=int(os.getenv("PORT", 8000)),
+        host=host,
+        port=port,
         reload=debug_mode,
         reload_dirs=reload_dirs,
     )
