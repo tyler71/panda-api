@@ -1,14 +1,11 @@
-# fly.toml file generated for rest-image-overlay on 2022-10-24T00:00:32-07:00
+# fly.toml file generated for panda-api on 2022-10-28T16:20:49-07:00
 
-app = "rest-image-overlay"
+app = "panda-api"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
-
-[build]
-  build-target = "prod"
 
 [experimental]
   allowed_public_ports = []

@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   app:
-    image: "ghcr.io/tyler71/rest-image-overlay:latest"
+    image: "ghcr.io/tyler71/panda-api:latest"
     build:
       context: .
       target: dev
