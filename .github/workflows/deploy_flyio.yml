@@ -5,9 +5,8 @@ on:
 #   tags:
 #     - "v*.*.*"
   push:
-    branch:
+    branches:
       - master
-      - learnfastapi
 
 jobs:
   deploy:
