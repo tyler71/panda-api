@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/rest-image-overlay.iml" filepath="$PROJECT_DIR$/.idea/rest-image-overlay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/panda-api.iml" filepath="$PROJECT_DIR$/.idea/panda-api.iml" />
     </modules>
   </component>
 </project>
