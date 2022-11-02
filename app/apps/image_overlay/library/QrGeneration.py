@@ -1,5 +1,5 @@
 import io
-
+import math
 import segno
 from PIL import Image
 
@@ -15,14 +15,19 @@ class QrGeneration:
         self.error_correction = error_correction
         self.yourls = Yourls(domain=yourls_domain, signature=yourls_signature, method='POST', output='json')
 
-    def _size(self):
-        pass
-
     def generate(self, msg: str, size: tuple = (100, 100), *, qr_options: dict) -> Image.Image:
-        qr_data = io.BytesIO()
-
-        qrcode = segno.make(msg, error=self.error_correction)
-        qrcode.save(qr_data, **qr_options)
-        # qrcode.save(qr_data, kind='PNG', dark='purple', border=1, scale=1)
-        qr = Image.open(qr_data)
+        shorturl = self.yourls.shorten(msg)
+        if shorturl.status_code in (200, 400):
+            qr_data = io.BytesIO()
+            qrcode = segno.make(shorturl.json()['shorturl'], error=self.error_correction)
+            qrcode.save(qr_data, scale=1, **qr_options)
+            qr = Image.open(qr_data)
+            if qr.size[0] < size[0]:
+                qr_scale = math.ceil(size[0] / qr.size[0])
+                qrcode.save(qr_data, scale=qr_scale, **qr_options)
+                qr = Image.open(qr_data)
+                if qr.size != size:
+                    qr = qr.resize(size, Image.Resampling.LANCZOS)
+        else:
+            qr = None
         return qr

@@ -1,8 +1,8 @@
 import io
 
 import requests
-import segno
 from PIL import Image
+from . import QrGeneration
 
 
 class ImageOverlay:
@@ -21,10 +21,3 @@ class ImageOverlay:
             self.image = Image.open(remote_photo_data).convert('RGBA')
             return self.image
 
-    def qr(self, msg: str) -> Image.Image:
-        qr_data = io.BytesIO()
-
-        qrcode = segno.make(msg, error='h')
-        qrcode.save(qr_data, kind='PNG', dark='purple', border=1, scale=1)
-        qr = Image.open(qr_data)
-        qr
