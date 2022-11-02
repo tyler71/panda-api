@@ -17,6 +17,13 @@
             </list>
           </settings>
         </remote-mappings>
+        <remote-mappings server-id="python@docker://ghcr.io/tyler71/panda-api:latest/python">
+          <settings>
+            <list>
+              <mapping local-root="$PROJECT_DIR$" remote-root="/app" />
+            </list>
+          </settings>
+        </remote-mappings>
       </list>
     </list>
   </component>
