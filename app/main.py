@@ -1,20 +1,21 @@
-from starlite import Starlite, Router, get
-from pydantic import BaseModel
+from starlite import Starlite, get, State
 
-class User(BaseModel):
-    Name: str
+from apps.core.controllers.core import set_state_startup
+
+from .apps.image_overlay.controllers.qr import QrCodeController
 
 @get("/")
 def hello_world() -> dict[str, str]:
+    return {'Hello': 'World'}
+
+@get("/hi")
+def hi(state: State) -> dict[str, str]:
     """Handler function that returns a greeting dictionary."""
-    a = 5 + 2
-    return {"hello": "world"}
-
-@get("/{user_id:int}")
-def get_user(user_id: int) -> dict[str, str]:
-    return {str(user_id): f"hi {user_id}"}
+    return state.settings
 
 
-user_router = Router(path="/user", route_handlers=[get_user])
-
-app = Starlite(route_handlers=[hello_world, user_router])
+app = Starlite(
+    route_handlers=[hello_world, hi, QrCodeController],
+    on_startup=[set_state_startup],
+    on_shutdown=[],
+)

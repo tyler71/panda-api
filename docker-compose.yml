@@ -2,6 +2,7 @@ version: '3.3'
 services:
   app:
     image: "ghcr.io/tyler71/panda-api:latest"
+    restart: unless-stopped
     build:
       context: .
       target: dev
@@ -9,7 +10,8 @@ services:
         - '8080:8000'
     volumes:
       - './app:/app'
-    restart: unless-stopped
+    env_file:
+      - '.env'
     networks:
       - internal
 # db:

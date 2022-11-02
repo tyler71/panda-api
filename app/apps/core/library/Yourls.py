@@ -137,6 +137,6 @@ class YourlsDelete(Yourls):
         return self._make_request(req)
 
 
-class PandaYourls(YourlsDelete, YourlsUpdate):
+class AllYourls(YourlsDelete, YourlsUpdate):
     def __init__(self, domain: str, signature: str, *, method: str = "GET", output: str = 'json'):
         super().__init__(domain, signature, method=method, output=output)
