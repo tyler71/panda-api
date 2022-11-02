@@ -29,7 +29,7 @@ class Yourls:
         # Check if nonce doesn't exist, or if it does exist, check to see if it's expired (greater than n hours)
         if self.nonce is None or unix_timestamp > (
                 self.nonce['timestamp'] + int(
-            datetime.datetime.timestamp(present_date + datetime.timedelta(minutes=55)))):
+                datetime.datetime.timestamp(present_date + datetime.timedelta(minutes=55)))):
             res = hashlib.sha512(f'{unix_timestamp}{self.signature}'.encode())
             self.nonce = {'timestamp': unix_timestamp, 'hash': 'sha512', 'signature': res.hexdigest()}
         return self.nonce
@@ -42,6 +42,8 @@ class Yourls:
             result = requests.get(f'{self.domain}?{req}')
         elif self.method == 'POST':
             result = requests.post(self.domain, data=cleaned_request)
+        else:
+            result = None
         return result
 
     def version(self) -> requests.models.Response:
