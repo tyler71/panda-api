@@ -2,7 +2,7 @@ from starlite import Starlite, get, State
 
 from apps.core.controllers.core import set_state_startup
 
-from .apps.image_overlay.controllers.qr import QrCodeController
+from apps.image_overlay.controllers.qr import QrCodeController
 
 @get("/")
 def hello_world() -> dict[str, str]:
@@ -18,4 +18,5 @@ app = Starlite(
     route_handlers=[hello_world, hi, QrCodeController],
     on_startup=[set_state_startup],
     on_shutdown=[],
+    debug=True,
 )
