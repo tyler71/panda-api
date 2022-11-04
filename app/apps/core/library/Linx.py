@@ -4,8 +4,8 @@ import requests
 
 
 class Skel:
-    request: dict
-    headers: dict
+    request: dict = dict()
+    headers: dict = dict()
     endpoint: str
     method: str
 
@@ -27,16 +27,19 @@ class Linx:
 
     def _make_request(self, req: Skel) -> requests.models.Response:
         # cleanup, encode, and complete the request
-        cleaned_request = {k: v for (k, v) in req.request.items() if v is not None}
-        cleaned_headers = {k: v for (k, v) in req.headers.items() if v is not None}
+        print(dir(req))
+        if type(req.request) == dict:
+            req.request = {k: v for (k, v) in req.request.items() if v is not None}
+        if type(req.headers) == dict:
+            req.headers = {k: v for (k, v) in req.headers.items() if v is not None}
         if req.method == 'GET':
-            result = requests.get(f'{self.domain}{req.endpoint}{cleaned_request}', headers=cleaned_headers)
+            result = requests.get(f'{self.domain}{req.endpoint}{req.request}', headers=req.headers)
         elif req.method == 'POST':
-            result = requests.post(f'{self.domain}{req.endpoint}', data=cleaned_request, headers=cleaned_headers)
+            result = requests.post(f'{self.domain}{req.endpoint}', data=req.request, headers=req.headers)
         elif req.method == 'PUT':
-            result = requests.put(f'{self.domain}{req.endpoint}', data=cleaned_request, headers=cleaned_headers)
+            result = requests.put(f'{self.domain}{req.endpoint}', data=req.request, headers=req.headers)
         elif req.method == 'DELETE':
-            result = requests.delete(f'{self.domain}{req.endpoint}', data=cleaned_request, headers=cleaned_headers)
+            result = requests.delete(f'{self.domain}{req.endpoint}', headers=req.headers)
         else:
             result = None
         return result
