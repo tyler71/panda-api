@@ -4,8 +4,8 @@ import requests
 
 
 class Skel:
-    request: dict
-    headers: dict
+    request: dict = dict()
+    headers: dict = dict()
     endpoint: str
     method: str
 
@@ -20,39 +20,44 @@ class Linx:
         skel = Skel()
         skel.headers.update({
             'Linx-Api-Key': self.apikey,
-            'Accept': 'application,json',
+            'Accept': 'application/json',
         })
 
         return skel
 
     def _make_request(self, req: Skel) -> requests.models.Response:
         # cleanup, encode, and complete the request
-        cleaned_request = {k: v for (k, v) in req.request.items() if v is not None}
-        cleaned_headers = {k: v for (k, v) in req.headers.items() if v is not None}
+        if type(req.request) == dict:
+            req.request = {k: v for (k, v) in req.request.items() if v is not None}
+        if type(req.headers) == dict:
+            req.headers = {k: v for (k, v) in req.headers.items() if v is not None}
         if req.method == 'GET':
-            result = requests.get(f'{self.domain}{req.endpoint}{cleaned_request}', headers=cleaned_headers)
+            result = requests.get(f'{self.domain}{req.endpoint}{req.request}', headers=req.headers)
         elif req.method == 'POST':
-            result = requests.post(f'{self.domain}{req.endpoint}', data=cleaned_request, headers=cleaned_headers)
+            result = requests.post(f'{self.domain}{req.endpoint}', files=req.request, headers=req.headers)
         elif req.method == 'PUT':
-            result = requests.put(f'{self.domain}{req.endpoint}', data=cleaned_request, headers=cleaned_headers)
+            result = requests.put(f'{self.domain}{req.endpoint}', files=req.request, headers=req.headers)
+            print(requests.Request('PUT', self.domain, files=req.request).prepare().body)
         elif req.method == 'DELETE':
-            result = requests.delete(f'{self.domain}{req.endpoint}', data=cleaned_request, headers=cleaned_headers)
+            result = requests.delete(f'{self.domain}{req.endpoint}', headers=req.headers)
         else:
             result = None
         return result
 
-    def upload(self, file: io.BytesIO, randomize_filename: bool = None, delete_key: str = None,
+    def upload(self, file: io.BytesIO, filename: str = None, content_type=None, randomize_filename: bool = None,
+               delete_key: str = None,
                password: str = None, expiration_seconds: int = None):
         req = self._get_skel()
         req.headers.update({
-            'Linx-Randomize': randomize_filename,
+            'Linx-Randomize': 'yes' if randomize_filename else None,
             'Linx-Delete-Key': delete_key,
             'Linx-Access-Key': password,
-            'Linx-Expiry': expiration_seconds,
+            'Linx-Expiry': str(expiration_seconds),
         })
+
         req.method = 'PUT'
-        req.endpoint = '/upload'
-        req.request = file
+        req.endpoint = f'/upload/{filename}'
+        req.request = {'files': (filename, file, content_type)}
         return self._make_request(req)
 
     def overwrite(self, file: io.BytesIO, delete_key: str) -> requests.models.Response:
@@ -79,3 +84,4 @@ class Linx:
         req.method = 'GET'
         req.endpoint = f'/{filename}'
         return self._make_request(req)
+
