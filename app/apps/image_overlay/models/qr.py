@@ -4,7 +4,15 @@ from dataclasses import dataclass
 
 
 @dataclass()
-class Qr(BaseModel):
+class Size(BaseModel):
+    x: int = 100
+    y: int = 100
+
+
+class QrCode(BaseModel):
     id: UUID4
-    size: tuple
-    qr_options: dict
+    msg: str
+    original_msg: str = None
+    size: Size = None
+    options: dict = None
+    image_url: str = None

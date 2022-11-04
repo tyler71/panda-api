@@ -1,1 +1,1 @@
-from .qr import Qr
+from .qr import QrCode, Size

@@ -15,18 +15,23 @@ class QrGeneration:
     def generate(self, msg: str, size: tuple = (100, 100), *, options=None) -> Image.Image:
         if options is None:
             options = dict()
+        if size is None:
+            class Size:
+                pass
+            size = Size()
+            size.x = 100
+            size.y = 100
 
         qr_data = io.BytesIO()
         qrcode = segno.make(msg, error=self.error_correction)
         qrcode.save(qr_data, kind='PNG', scale=1, **options)
         qr = Image.open(qr_data)
-        if qr.size[0] < size[0]:
+        if qr.size[0] < size.x:
             qr_data.seek(0)
             qr_data.truncate()
-
-            qr_scale = math.ceil(size[0] / qr.size[0])
+            qr_scale = math.ceil(size.x / qr.size[0])
             qrcode.save(qr_data, kind='PNG', scale=qr_scale, **options)
             qr = Image.open(qr_data)
-            if qr.size != size:
-                qr = qr.resize(size, Image.Resampling.LANCZOS)
+            if qr.size != (size.x, size.y):
+                qr = qr.resize((size.x, size.y), Image.Resampling.LANCZOS)
         return qr
