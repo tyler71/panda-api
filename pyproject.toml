@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "repl_nix_panda-api"
+version = "0.1.0"
+description = ""
+authors = ["Replit user <<>>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.28.1"
+segno = "^1.5.2"
+uvicorn = "^0.19.0"
+pydantic = "^1.10.2"
+starlite = "^1.35.1"
+Pillow = "^9.3.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
