@@ -10,7 +10,6 @@ class Size(BaseModel):
 
 
 class QrCode(BaseModel):
-    id: UUID4
     msg: str
     original_msg: str = None
     size: Size = None

@@ -4,9 +4,11 @@ from apps.core.controllers.core import set_state_startup
 
 from apps.image_overlay.controllers.qr import QrCodeController
 
+
 @get("/")
 def hello_world() -> dict[str, str]:
     return {'Hello': 'World'}
+
 
 @get("/hi")
 def hi(state: State) -> dict[str, str]:
