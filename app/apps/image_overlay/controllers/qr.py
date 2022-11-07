@@ -63,8 +63,8 @@ class QrCodeController(Controller):
             options=data.options,
             image_url=image_url
         )
-        if converted_to_url is None:
+        if converted_to_url is not None:
             res.original_msg = data.msg
-            res.msg = converted_to_url
+            res.msg = converted_to_url.json()['shorturl']
         print(data)
         return res
