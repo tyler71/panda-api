@@ -2,7 +2,7 @@ import uuid
 from typing import Optional
 from urllib.parse import urlparse
 
-from starlite import State, get
+from starlite import State, Partial, get, post
 from starlite.controller import Controller
 
 from ..library import QrGeneration
@@ -45,4 +45,26 @@ class QrCodeController(Controller):
         if converted_to_url is None:
             res.original_msg = msg
             res.msg = converted_to_url
+        return res
+
+    @post("/")
+    async def post_qr_image(self,
+                            state: State,
+                            data: Partial[QrCode],
+                            ) -> QrCode:
+
+        converted_to_url = self._is_url(data.msg, state=state)
+        self.qr.generate(data.msg, data.size, options=data.options)
+        image_url = 'https://demo.img'
+
+        res = QrCode(
+            msg=data.msg,
+            size=data.size,
+            options=data.options,
+            image_url=image_url
+        )
+        if converted_to_url is None:
+            res.original_msg = data.msg
+            res.msg = converted_to_url
+        print(data)
         return res
