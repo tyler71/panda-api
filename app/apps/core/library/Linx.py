@@ -34,10 +34,9 @@ class Linx:
         if req.method == 'GET':
             result = requests.get(f'{self.domain}{req.endpoint}{req.request}', headers=req.headers)
         elif req.method == 'POST':
-            result = requests.post(f'{self.domain}{req.endpoint}', files=req.request, headers=req.headers)
+            result = requests.post(f'{self.domain}{req.endpoint}', data=req.request, headers=req.headers)
         elif req.method == 'PUT':
-            result = requests.put(f'{self.domain}{req.endpoint}', files=req.request, headers=req.headers)
-            print(requests.Request('PUT', self.domain, files=req.request).prepare().body)
+            result = requests.put(f'{self.domain}{req.endpoint}', data=req.request, headers=req.headers)
         elif req.method == 'DELETE':
             result = requests.delete(f'{self.domain}{req.endpoint}', headers=req.headers)
         else:

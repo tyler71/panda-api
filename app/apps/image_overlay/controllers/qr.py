@@ -3,7 +3,7 @@ import binascii
 from typing import Optional
 from urllib.parse import urlparse
 
-from starlite import State, get, post, Partial
+from starlite import State, Partial, get, post
 from starlite.controller import Controller
 
 from ..library import QrGeneration
@@ -56,22 +56,23 @@ class QrCodeController(Controller):
         return res
 
     @post("/")
-    async def get_qr_image(self,
-                           state: State,
-                           data: QrCode,
-                           ) -> QrCode:
-        msg = self._is_base64(msg)
-        converted_to_url = self._is_url(msg, state=state)
-        img = self.qr.generate(msg, size, options=options)
+    async def post_qr_image(self,
+                            state: State,
+                            data: Partial[QrCode],
+                            ) -> QrCode:
+
+        converted_to_url = self._is_url(data.msg, state=state)
+        self.qr.generate(data.msg, data.size, options=data.options)
         image_url = 'https://demo.img'
 
         res = QrCode(
-            msg=msg,
-            size=size,
-            options=options,
+            msg=data.msg,
+            size=data.size,
+            options=data.options,
             image_url=image_url
         )
         if converted_to_url is not None:
-            res.original_msg = msg
-            res.msg = converted_to_url
+            res.original_msg = data.msg
+            res.msg = converted_to_url.json()['shorturl']
+        print(data)
         return res
