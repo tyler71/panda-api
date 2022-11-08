@@ -7,7 +7,7 @@ from starlite import State, Partial, get, post
 from starlite.controller import Controller
 
 from ..library import QrGeneration
-from ..models import QrCode, Size
+from ..models import RequestQrCode, ResponseQrCode, Size
 
 
 # from ...core.library import Yourls
@@ -38,7 +38,7 @@ class QrCodeController(Controller):
                            msg: str,
                            size: Optional[Size] = None,
                            options: Optional[dict] = None,
-                           ) -> QrCode:
+                           ) -> ResponseQrCode:
         msg = self._is_base64(msg)
         converted_to_url = self._is_url(msg, state=state)
         img = self.qr.generate(msg, size, options=options)
@@ -58,21 +58,24 @@ class QrCodeController(Controller):
     @post("/")
     async def post_qr_image(self,
                             state: State,
-                            data: Partial[QrCode],
-                            ) -> QrCode:
+                            data: Partial[RequestQrCode],
+                            ) -> ResponseQrCode:
 
         converted_to_url = self._is_url(data.msg, state=state)
-        self.qr.generate(data.msg, data.size, options=data.options)
+        qr_img = self.qr.generate(data.msg, data.size, options=data.options)
         image_url = 'https://demo.img'
 
-        res = QrCode(
+        res = ResponseQrCode(
             msg=data.msg,
-            size=data.size,
             options=data.options,
             image_url=image_url
         )
+        size = Size()
+        size.x, size.y = qr_img.size
+        res.size = size
+
         if converted_to_url is not None:
             res.original_msg = data.msg
-            res.msg = converted_to_url.json()['shorturl']
-        print(data)
+            res.msg = converted_to_url
+
         return res
