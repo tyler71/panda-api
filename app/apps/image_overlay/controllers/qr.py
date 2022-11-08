@@ -1,5 +1,6 @@
 import base64
 import binascii
+import io
 from typing import Optional
 from urllib.parse import urlparse
 
@@ -32,29 +33,6 @@ class QrCodeController(Controller):
         except binascii.Error:
             return s
 
-    @get("/{msg:str}")
-    async def get_qr_image(self,
-                           state: State,
-                           msg: str,
-                           size: Optional[Size] = None,
-                           options: Optional[dict] = None,
-                           ) -> ResponseQrCode:
-        msg = self._is_base64(msg)
-        converted_to_url = self._is_url(msg, state=state)
-        img = self.qr.generate(msg, size, options=options)
-        image_url = 'https://demo.img'
-
-        res = QrCode(
-            msg=msg,
-            size=size,
-            options=options,
-            image_url=image_url
-        )
-        if converted_to_url is not None:
-            res.original_msg = msg
-            res.msg = converted_to_url
-        return res
-
     @post("/")
     async def post_qr_image(self,
                             state: State,
@@ -62,13 +40,17 @@ class QrCodeController(Controller):
                             ) -> ResponseQrCode:
 
         converted_to_url = self._is_url(data.msg, state=state)
-        qr_img = self.qr.generate(data.msg, data.size, options=data.options)
-        image_url = 'https://demo.img'
+        output_url = converted_to_url if converted_to_url is not None else data.msg
+        qr_img = self.qr.generate(output_url, data.size, options=data.options)
+        qr_in_memory = io.BytesIO()
+        qr_img.save(qr_in_memory, format='png')
+        qr_in_memory.seek(0)
+        qr_image_url = state.linx.upload(qr_in_memory, randomize_filename=True, expiration_seconds=60)
 
         res = ResponseQrCode(
             msg=data.msg,
             options=data.options,
-            image_url=image_url
+            image_url=qr_image_url.json()['direct_url']
         )
         size = Size()
         size.x, size.y = qr_img.size
