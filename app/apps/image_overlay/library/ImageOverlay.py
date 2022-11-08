@@ -16,13 +16,11 @@ class ImageOverlay:
                 .convert('RGBA')
             res = self.image
         else:
-            res = self.image
+            res = self.image.copy()
         return res
 
-    def overlay(self, layers: list[Image.Image, tuple[int, int]]) -> Image.Image:
-        layered_image = io.BytesIO()
-        bg = self.image.copy()
-        for layer in layers:
-            bg.paste(layer[0], layer[1])
-        bg.save(layered_image, format='PNG')
-        return Image.open(layered_image)
+    def overlay(self, layers: list[list[Image.Image, tuple[int, int]]]) -> Image.Image:
+        bg = self._get_image()
+        for image, point in layers:
+            bg.paste(image, tuple(dict(point).values()))
+        return bg

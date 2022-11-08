@@ -15,12 +15,14 @@ class QrGeneration:
     def generate(self, msg: str, size: tuple = (100, 100), *, options=None) -> Image.Image:
         if options is None:
             options = dict()
-        if size is None:
-            class Size:
-                pass
-            size = Size()
-            size.x = 100
-            size.y = 100
+
+        class Size:
+            x: int
+            y: int
+
+        t_size = Size()
+        t_size.x, t_size.y = size
+        size = t_size
 
         qr_data = io.BytesIO()
         qrcode = segno.make(msg, error=self.error_correction)
