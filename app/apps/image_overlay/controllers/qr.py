@@ -1,10 +1,7 @@
-import base64
-import binascii
 import io
-from typing import Optional
 from urllib.parse import urlparse
 
-from starlite import State, Partial, get, post
+from starlite import State, Partial, post
 from starlite.controller import Controller
 
 from ..library import QrGeneration
@@ -25,13 +22,6 @@ class QrCodeController(Controller):
         else:
             res = None
         return res
-
-    def _is_base64(self, s):
-        try:
-            res = base64.b64encode(base64.b64decode(s)).decode().strip() == s
-            return base64.b64decode(s).decode().strip() if res else s
-        except binascii.Error:
-            return s
 
     @post("/")
     async def post_qr_image(self,

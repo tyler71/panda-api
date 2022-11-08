@@ -5,9 +5,8 @@ from PIL import Image
 
 
 class ImageOverlay:
-    def __init__(self, image_url: str, qr_position: tuple):
+    def __init__(self, image_url: str):
         self.image_url = image_url
-        self.qr_position = qr_position
         self.image: Image.Image = None
 
     def _get_image(self) -> Image.Image:

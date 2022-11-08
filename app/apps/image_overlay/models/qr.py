@@ -1,6 +1,4 @@
-from pydantic import BaseModel, UUID4
-
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
 class Size(BaseModel):
@@ -12,7 +10,7 @@ class RequestQrCode(BaseModel):
     msg: str
     size: Size = None
     options: dict = None
-    image_url: str = None
+
 
 class ResponseQrCode(BaseModel):
     msg: str
