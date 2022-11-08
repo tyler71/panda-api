@@ -7,7 +7,7 @@ from starlite import State, Partial, post
 from starlite.controller import Controller
 
 from ..library import QrGeneration, ImageOverlay
-from ..models import RequestImageOverlay, ResponseImageOverlay, QrLocation
+from ..models import RequestImageOverlay, ResponseImageOverlay, QrLocation, Size
 import numpy as np
 
 
@@ -41,13 +41,15 @@ class ImageOverlayController(Controller):
 
         img_overlay = ImageOverlay(image_url=data.base_image)
 
-        qr_box = self._image_box(data.qr_location)
+        qr_box = self._image_box(data.qr.location)
 
-        converted_to_url = self._is_url(data.qr_msg, state=state)
-        output_url = converted_to_url if converted_to_url is not None else data.qr_msg
-        qr_img = self.qr.generate(output_url, size=(qr_box.width, qr_box.height), options=data.qr_options)
+        converted_to_url = self._is_url(data.qr.msg, state=state)
+        output_url = converted_to_url if converted_to_url is not None else data.qr.msg
+        qr_img_size = Size()
+        qr_img_size.x, qr_img_size.y = qr_box.width, qr_box.height
+        qr_img = self.qr.generate(output_url, size=qr_img_size, background_image_url=data.qr.background_url, options=data.qr.options)
 
-        layered_img = img_overlay.overlay([[qr_img, data.qr_location.upper_left]])
+        layered_img = img_overlay.overlay([[qr_img, data.qr.location.upper_left]])
         layered_img_bytes = io.BytesIO()
         layered_img.save(layered_img_bytes, format="PNG")
         layered_img_bytes.seek(0)

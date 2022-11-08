@@ -10,6 +10,7 @@ class RequestQrCode(BaseModel):
     msg: str
     size: Size = None
     options: dict = None
+    background_url: str = None
 
 
 class ResponseQrCode(BaseModel):

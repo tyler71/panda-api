@@ -15,11 +15,16 @@ class QrLocation(BaseModel):
     bottom_right: Point
 
 
+class QrImageOverlay(BaseModel):
+    msg: str
+    location: QrLocation
+    options: dict = None
+    background_url: str = None
+
+
 class RequestImageOverlay(BaseModel):
     base_image: str
-    qr_msg: str
-    qr_location: QrLocation
-    qr_options: dict = None
+    qr: QrImageOverlay
 
 
 class ResponseImageOverlay(BaseModel):

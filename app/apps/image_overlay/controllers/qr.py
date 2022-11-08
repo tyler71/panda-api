@@ -31,7 +31,7 @@ class QrCodeController(Controller):
 
         converted_to_url = self._is_url(data.msg, state=state)
         output_url = converted_to_url if converted_to_url is not None else data.msg
-        qr_img = self.qr.generate(output_url, data.size, options=data.options)
+        qr_img = self.qr.generate(output_url, data.size, options=data.options, background_image_url=data.background_url)
         qr_in_memory = io.BytesIO()
         qr_img.save(qr_in_memory, format='png')
         qr_in_memory.seek(0)
