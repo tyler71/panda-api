@@ -1,8 +1,9 @@
 import io
 import math
+
+import requests
 import segno
 from PIL import Image
-from urllib.request import urlopen
 
 from ..models import Size
 
@@ -30,8 +31,9 @@ class QrGeneration:
         # Now we calculate the scale of the image. We will resize it as well, so we always go one scale up
         qr_scale = math.ceil(size.x / qr.size[0])
         if background_image_url:
-            with urlopen(background_image_url) as bg_url_data:
-                qrcode.to_artistic(background=bg_url_data, target=qr_data, kind='png', scale=qr_scale)
+            background_image = requests.get(background_image_url)
+            background_image_data = io.BytesIO(background_image.content)
+            qrcode.to_artistic(background=background_image_data, target=qr_data, kind='png', scale=qr_scale)
         else:
             qrcode.save(qr_data, kind='PNG', scale=qr_scale, **options)
         qr = Image.open(qr_data)
