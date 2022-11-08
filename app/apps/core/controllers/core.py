@@ -9,6 +9,7 @@ class AppSettings(BaseSettings):
     YOURLS_SIGNATURE: str
     LINX_DOMAIN: str
     LINX_APIKEY: str
+    QR_IMAGE_EXPIRATION: int = 86400
 
     class Config:
         case_sensitive = True

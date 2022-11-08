@@ -10,14 +10,8 @@ def hello_world() -> dict[str, str]:
     return {'Hello': 'World'}
 
 
-@get("/hi")
-def hi(state: State) -> dict[str, str]:
-    """Handler function that returns a greeting dictionary."""
-    return state.settings
-
-
 app = Starlite(
-    route_handlers=[hello_world, hi, QrCodeController],
+    route_handlers=[hello_world, QrCodeController],
     on_startup=[set_state_startup],
     on_shutdown=[],
     debug=True,
