@@ -6,6 +6,8 @@ import segno
 from PIL import Image
 
 from ..models import Size
+from starlite import Response, HTTPException
+from starlite.status_codes import HTTP_400_BAD_REQUEST
 
 class QrGeneration:
     """
@@ -18,6 +20,9 @@ class QrGeneration:
     def generate(self, msg: str, size: Size, *, background_image_url: str = None, options=None) -> Image.Image:
         if options is None:
             options = dict()
+
+        if options and background_image_url:
+            raise HTTPException("Cannot use both options and background_url at the same time")
 
         # Here we are making the initial qr code image. We want the size of it
         # so we can calculate the correct size later
