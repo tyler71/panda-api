@@ -9,6 +9,7 @@ from ..models import Size
 from starlite import Response, HTTPException
 from starlite.status_codes import HTTP_400_BAD_REQUEST
 
+
 class QrGeneration:
     """
     https://segno.readthedocs.io/en/latest/colorful-qrcodes.html

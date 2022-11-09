@@ -28,7 +28,8 @@ class ImageOverlayController(Controller):
     def _is_url(self, msg: str, *, state: State) -> str:
         o = urlparse(msg)
         if o.scheme != '':
-            res = state.yourls.shorten(o.geturl()).json()['shorturl']
+            res = state.yourls.shorten(o.geturl())
+            res = res.json()['shorturl']
         else:
             res = None
         return res
