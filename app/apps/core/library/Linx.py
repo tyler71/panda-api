@@ -59,11 +59,11 @@ class Linx:
         else:
             result = None
 
-        if type(result) is requests.models.Response:
-            try:
-                result.json()
-            except JSONDecodeError:
-                logger.critical(f'yourls._make_request {result.content}')
+        assert type(result) is requests.models.Response
+        try:
+            result.json()
+        except JSONDecodeError:
+            logger.critical(f'yourls._make_request {result.content}')
         return result
 
     def upload(self, file, filename: str = None, randomize_filename: bool = None, delete_key: str = None,
