@@ -31,11 +31,9 @@ class Linx:
             'Accept': 'application/json',
             'User-Agent': 'panda-api',
         })
-
         return skel
 
     def _auth_header(self) -> str:
-
         sample_string = base64.b64encode(self.apikey)
         sample_string_bytes = sample_string.encode("ascii")
 

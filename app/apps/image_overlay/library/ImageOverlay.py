@@ -1,14 +1,9 @@
 import io
-import typing
 
 import requests
 from PIL import Image
 
-
-class Layer(typing.TypedDict):
-    img: Image.Image
-    upper_left: tuple[int, int]
-    mask: Image.Image = None
+from ..models import Layer
 
 
 class ImageOverlay:
@@ -29,7 +24,7 @@ class ImageOverlay:
         layered_image = io.BytesIO()
         bg = self._get_image().copy()
         for layer in layers:
-            bg.paste(layer['img'], layer['upper_left'], mask=layer['mask'])
+            bg.paste(layer.img, tuple(layer.upper_left.__dict__.values()), mask=layer.mask)
 
         bg.save(layered_image, format='PNG')
         return Image.open(layered_image)
