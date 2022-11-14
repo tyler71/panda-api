@@ -1,6 +1,8 @@
-from starlite import Starlite, get, Router
+from os import getenv
 
-from apps.core.controllers.core import set_state_startup
+from starlite import Starlite, get, Router, State
+
+from apps.core.controllers.core import set_state_startup, logging_config
 
 from apps.image_overlay.controllers import image_overlay_router
 
@@ -13,9 +15,12 @@ def hello_world() -> dict[str, str]:
 latest = Router(path="", route_handlers=[hello_world, image_overlay_router])
 # v1 = Router(path="/v1", route_handlers=[hello_world, image_overlay_router])
 
+state = State()
+
 app = Starlite(
     route_handlers=[latest],
     on_startup=[set_state_startup],
     on_shutdown=[],
-    debug=True,
+    logging_config=logging_config,
+    debug=True if getenv("DEBUG", False) == "True" else False,
 )

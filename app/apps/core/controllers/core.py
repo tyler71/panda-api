@@ -1,5 +1,5 @@
 from pydantic import BaseSettings
-from starlite import State
+from starlite import State, LoggingConfig
 
 from .startup_down import get_yourls_connection, get_linx_connection
 
@@ -15,10 +15,18 @@ class AppSettings(BaseSettings):
         case_sensitive = True
 
 
-settings = AppSettings()
+logging_config = LoggingConfig(
+    loggers={
+        "panda-api": {
+            "level": "INFO",
+            "handlers": ["queue_listener"],
+        }
+    }
+)
 
 
 def set_state_startup(state: State):
+    settings = AppSettings()
     state.settings = settings
     state.yourls = get_yourls_connection(state=state, domain=settings.YOURLS_DOMAIN,
                                          signature=settings.YOURLS_SIGNATURE)

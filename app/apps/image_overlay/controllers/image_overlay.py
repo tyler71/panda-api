@@ -3,7 +3,8 @@ from urllib.parse import urlparse
 
 from PIL import Image
 from UliEngineering.Math.Coordinates import BoundingBox
-from starlite import State, Partial, post
+from requests import JSONDecodeError
+from starlite import State, Partial, post, Request
 from starlite.controller import Controller
 
 from ..library import QrGeneration, ImageOverlay
@@ -16,7 +17,6 @@ import numpy as np
 
 class ImageOverlayController(Controller):
     path = "/image_overlay"
-    qr = QrGeneration()
 
     def _image_box(self, coordinates: QrLocation) -> BoundingBox:
         c = coordinates
@@ -25,11 +25,15 @@ class ImageOverlayController(Controller):
         box = BoundingBox(np_array)
         return box
 
-    def _is_url(self, msg: str, *, state: State) -> str:
+    def _is_url(self, msg: str, *, state: State, request: Request) -> str:
         o = urlparse(msg)
         if o.scheme != '':
             res = state.yourls.shorten(o.geturl())
-            res = res.json()['shorturl']
+            try:
+                res = res.json()['shorturl']
+                request.logger.log(res)
+            except JSONDecodeError:
+                request.logger.log(res)
         else:
             res = None
         return res
@@ -37,6 +41,7 @@ class ImageOverlayController(Controller):
     @post("/")
     async def post_image_overlay(self,
                                  state: State,
+                                 request: Request,
                                  data: Partial[RequestImageOverlay],
                                  ) -> ResponseImageOverlay:
 
