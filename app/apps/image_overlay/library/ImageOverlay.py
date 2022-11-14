@@ -1,4 +1,5 @@
 import io
+import typing
 
 import requests
 from PIL import Image
@@ -9,6 +10,11 @@ class ImageOverlay:
         self.image_url = image_url
         self.image: Image.Image = None
 
+    class Layer(typing.TypedDict):
+        img: Image.Image
+        upper_left: tuple[int, int]
+        mask: Image.Image = None
+
     def _get_image(self) -> Image.Image:
         if self.image is None:
             remote_photo_request = requests.get(self.image_url)
@@ -16,11 +22,14 @@ class ImageOverlay:
                 .convert('RGBA')
             res = self.image
         else:
-            res = self.image.copy()
+            res = self.image
         return res
 
-    def overlay(self, layers: list[list[Image.Image, tuple[int, int]]]) -> Image.Image:
-        bg = self._get_image()
-        for image, point in layers:
-            bg.paste(image, tuple(dict(point).values()))
-        return bg
+    def overlay(self, layers: list[Layer]) -> Image.Image:
+        layered_image = io.BytesIO()
+        bg = self._get_image().copy()
+        for layer in layers:
+            bg.paste(layer['img'], layer['upper_left'], mask=layer['mask'])
+
+        bg.save(layered_image, format='PNG')
+        return Image.open(layered_image)

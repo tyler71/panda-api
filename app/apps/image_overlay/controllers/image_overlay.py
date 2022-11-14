@@ -49,11 +49,13 @@ class ImageOverlayController(Controller):
 
         qr_box = self._image_box(data.qr.location)
 
-        converted_to_url = self._is_url(data.qr.msg, state=state)
+        converted_to_url = self._is_url(data.qr.msg, state=state, request=request)
         output_url = converted_to_url if converted_to_url is not None else data.qr.msg
         qr_img_size = Size()
         qr_img_size.x, qr_img_size.y = qr_box.width, qr_box.height
-        qr_img = self.qr.generate(output_url, size=qr_img_size, background_image_url=data.qr.background_url, options=data.qr.options)
+        qr = QrGeneration(output_url, size=qr_img_size,
+                          background_image_url=data.qr.background_url, options=data.qr.options)
+        qr_img = qr.generate()
 
         layered_img = img_overlay.overlay([[qr_img, data.qr.location.upper_left]])
         layered_img_bytes = io.BytesIO()
