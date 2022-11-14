@@ -11,6 +11,7 @@ from ..library import QrGeneration, ImageOverlay
 from ..models import RequestImageOverlay, ResponseImageOverlay, QrLocation, Size
 import numpy as np
 
+from ...core.library import try_shorten_url
 
 # from ...core.library import Yourls
 
@@ -25,19 +26,6 @@ class ImageOverlayController(Controller):
         box = BoundingBox(np_array)
         return box
 
-    def _is_url(self, msg: str, *, state: State, request: Request) -> str:
-        o = urlparse(msg)
-        if o.scheme != '':
-            res = state.yourls.shorten(o.geturl())
-            try:
-                res = res.json()['shorturl']
-                request.logger.log(res)
-            except JSONDecodeError:
-                request.logger.log(res)
-        else:
-            res = None
-        return res
-
     @post("/")
     async def post_image_overlay(self,
                                  state: State,
@@ -49,7 +37,7 @@ class ImageOverlayController(Controller):
 
         qr_box = self._image_box(data.qr.location)
 
-        converted_to_url = self._is_url(data.qr.msg, state=state, request=request)
+        converted_to_url = try_shorten_url(data.qr.msg, state=state, request=request)
         output_url = converted_to_url if converted_to_url is not None else data.qr.msg
         qr_img_size = Size()
         qr_img_size.x, qr_img_size.y = qr_box.width, qr_box.height

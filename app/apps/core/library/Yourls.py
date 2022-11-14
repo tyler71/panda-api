@@ -3,7 +3,10 @@ import hashlib
 import urllib.parse
 
 import requests
+from requests import JSONDecodeError
+import logging
 
+logger = logging.getLogger()
 
 class Yourls:
     def __init__(self, domain: str, signature: str, *, method: str = "GET", output: str = 'json'):
@@ -44,6 +47,12 @@ class Yourls:
             result = requests.post(self.domain, data=cleaned_request)
         else:
             result = None
+
+        if type(result) is requests.models.Response:
+            try:
+                result.json()
+            except JSONDecodeError:
+                logger.critical(f'yourls._make_request {result.content}')
         return result
 
     def version(self) -> requests.models.Response:

@@ -8,25 +8,11 @@ from starlite.controller import Controller
 from ..library import QrGeneration
 from ..models import RequestQrCode, ResponseQrCode, Size
 
-
-# from ...core.library import Yourls
+from ...core.library import try_shorten_url
 
 
 class QrCodeController(Controller):
     path = "/qr"
-
-    def _is_url(self, msg: str, *, state: State, request: Request) -> str:
-        o = urlparse(msg)
-        if o.scheme != '':
-            res = state.yourls.shorten(o.geturl())
-            try:
-                res = res.json()['shorturl']
-                request.logger.log(res)
-            except JSONDecodeError:
-                request.logger.log(res)
-        else:
-            res = None
-        return res
 
     @post("/")
     async def post_qr_image(self,
@@ -34,8 +20,7 @@ class QrCodeController(Controller):
                             request: Request,
                             data: Partial[RequestQrCode],
                             ) -> ResponseQrCode:
-
-        converted_to_url = self._is_url(data.msg, state=state, request=request)
+        converted_to_url = try_shorten_url(data.msg, state=state, request=request)
         output_url = converted_to_url if converted_to_url is not None else data.msg
         qr = QrGeneration(output_url, data.size, options=data.options, background_image_url=data.background_url)
         qr_img = qr.generate()

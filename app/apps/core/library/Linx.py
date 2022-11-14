@@ -1,8 +1,10 @@
 import base64
 import io
+import logging
 import urllib.parse
 
 import requests
+from requests import JSONDecodeError
 
 
 class Skel:
@@ -10,6 +12,9 @@ class Skel:
     headers: dict = dict()
     endpoint: str
     method: str
+
+
+logger = logging.getLogger()
 
 
 class Linx:
@@ -34,7 +39,7 @@ class Linx:
         sample_string = base64.b64encode(self.apikey)
         sample_string_bytes = sample_string.encode("ascii")
 
-        base64_bytes = (sample_string_bytes)
+        base64_bytes = sample_string_bytes
 
     def _make_request(self, req: Skel) -> requests.models.Response:
         # cleanup, encode, and complete the request
@@ -53,6 +58,12 @@ class Linx:
             result = requests.delete(f'{self.domain}{req.endpoint}', headers=req.headers)
         else:
             result = None
+
+        if type(result) is requests.models.Response:
+            try:
+                result.json()
+            except JSONDecodeError:
+                logger.critical(f'yourls._make_request {result.content}')
         return result
 
     def upload(self, file, filename: str = None, randomize_filename: bool = None, delete_key: str = None,
@@ -97,4 +108,3 @@ class Linx:
         req.method = 'GET'
         req.endpoint = f'/{self.qp(filename)}'
         return self._make_request(req)
-
