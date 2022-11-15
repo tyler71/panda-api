@@ -12,8 +12,11 @@ def hello_world() -> dict[str, str]:
     return {'Hello': 'World'}
 
 
-latest = Router(path="", route_handlers=[hello_world, image_overlay_router])
-# v1 = Router(path="/v1", route_handlers=[hello_world, image_overlay_router])
+image_overlay_app = Router(path="/image_overlay", route_handlers=[image_overlay_router])
+
+latest = Router(path="", route_handlers=[hello_world,
+                                         image_overlay_app])
+# v1_router = Router(path="v/1", route_handlers=[hello_world, image_overlay_router])
 
 state = State()
 

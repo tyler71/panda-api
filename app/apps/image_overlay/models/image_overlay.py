@@ -1,3 +1,4 @@
+import io
 from typing import NamedTuple, TypedDict
 
 import numpy as np
@@ -23,6 +24,18 @@ class Layer:
     upper_left: Point
     mask: Image.Image = None
 
+    def __add__(self, o):
+        if type(o) is Layer:
+            layered_image = io.BytesIO()
+            upper_left = tuple[int, int](o.upper_left.__dict__.values())
+            self.img.paste(o.img, upper_left, o.mask)
+            self.img.save(layered_image, format="png")
+            res = Layer()
+            res.__dict__ = {"img": Image.open(layered_image), "upper_left": self.upper_left,
+                            "mask": self.mask}
+            return res
+
+        return self
 
 class QrLocation(BaseModel):
     """

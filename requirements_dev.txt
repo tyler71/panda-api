@@ -1,1 +1,1 @@
-starlite[testing]==1.38.0
+starlite[testing]==1.39.0

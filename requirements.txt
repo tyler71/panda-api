@@ -1,7 +1,8 @@
-starlite[cryptography]==1.38.0
+starlite[cryptography]==1.39.0
+starlite-sessions==1.2.0
 python-jose==3.3.0
 uvicorn==0.19.0
-SQLAlchemy==1.4.43
+SQLAlchemy==1.4.44
 Pillow==9.3.0
 segno==1.5.2
 qrcode-artistic==2.1.0
