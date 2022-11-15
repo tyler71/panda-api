@@ -4,9 +4,9 @@ import math
 import requests
 import segno
 from PIL import Image
+from starlite import HTTPException
 
 from ..models import Size
-from starlite import Response, HTTPException
 
 
 class QrGeneration:
@@ -44,7 +44,7 @@ class QrGeneration:
         qr_data.truncate()
 
         # Now we calculate the scale of the image. We will resize it as well, so we always go one scale up
-        qr_scale = math.ceil(self.size.x / qr.size[0])
+        qr_scale = math.ceil(self.size.width / qr.size[0])
         if self.background_image_url:
             background_image = requests.get(self.background_image_url)
             background_image_data = io.BytesIO(background_image.content)
@@ -52,7 +52,7 @@ class QrGeneration:
         else:
             qrcode.save(qr_data, kind='PNG', scale=qr_scale, **self.options)
         qr = Image.open(qr_data)
-        if qr.size != (self.size.x, self.size.y):
-            qr = qr.resize((self.size.x, self.size.y), Image.Resampling.LANCZOS)
+        if qr.size != (self.size.width, self.size.height):
+            qr = qr.resize((self.size.width, self.size.height), Image.Resampling.LANCZOS)
 
         return qr

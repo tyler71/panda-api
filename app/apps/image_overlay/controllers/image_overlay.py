@@ -31,7 +31,7 @@ class ImageOverlayController(Controller):
         # Identify the size of the qr code. We're looking to ensure it is scaled high enough
         # to the desired size.
         qr_img_size = Size()
-        qr_img_size.x, qr_img_size.y = qr_box.width, qr_box.height
+        qr_img_size.width, qr_img_size.height = qr_box.width, qr_box.height
         qr = QrGeneration(output_url, size=qr_img_size,
                           background_image_url=data.qr.background_url, **data.qr.options)
         qr_img = qr.generate()

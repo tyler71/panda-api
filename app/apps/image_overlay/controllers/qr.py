@@ -35,7 +35,7 @@ class QrCodeController(Controller):
             image_url=qr_image_url.json()['direct_url']
         )
         size = Size()
-        size.x, size.y = qr_img.size
+        size.width, size.height = qr_img.size
         res.size = size
 
         if converted_to_url is not None:
