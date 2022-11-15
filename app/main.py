@@ -2,9 +2,9 @@ from os import getenv
 
 from starlite import Starlite, get, Router, State
 
-from apps.core.controllers.core import set_state_startup, logging_config
+from apps.core import set_state_startup, logging_config
 
-from apps.image_overlay.controllers import image_overlay_router
+from apps.image_overlay import image_overlay_router
 
 
 @get("/")

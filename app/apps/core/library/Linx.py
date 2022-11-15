@@ -64,13 +64,13 @@ class Linx:
             logger.critical(f'yourls._make_request {result.content}')
         return result
 
-    def upload(self, file, filename: str = None, randomize_filename: bool = None, delete_key: str = None,
-               password: str = None, expiration_seconds: int = None):
+    def upload(self, file: io.BytesIO, filename: str = None, randomize_filename: bool = None, delete_key: str = None,
+               password: str = None, expiration_seconds: int = None) -> requests.models.Response:
         req = self._get_skel()
         req.headers.update({
             'Linx-Randomize': 'yes' if randomize_filename else None,
-            'Linx-Delete-Key': delete_key,
-            'Linx-Access-Key': password,
+            'Linx-Delete-Key': str(delete_key),
+            'Linx-Access-Key': str(password),
             'Linx-Expiry': str(expiration_seconds),
             'Content-Disposition': f'attachment; filename={filename}'
         })

@@ -24,7 +24,8 @@ class ImageOverlay:
         layered_image = io.BytesIO()
         bg = self._get_image().copy()
         for layer in layers:
-            bg.paste(layer.img, tuple(layer.upper_left.__dict__.values()), mask=layer.mask)
+            upper_left = tuple[int, int](layer.upper_left.__dict__.values())
+            bg.paste(layer.img, upper_left, mask=layer.mask)
 
         bg.save(layered_image, format='PNG')
         return Image.open(layered_image)
