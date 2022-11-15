@@ -14,6 +14,10 @@ class Point(BaseModel):
     x: int
     y: int
 
+    @property
+    def coordinates(self) -> tuple[int, int]:
+        return self.x, self.y
+
 
 class Layer:
     """
@@ -37,6 +41,7 @@ class Layer:
 
         return self
 
+
 class QrLocation(BaseModel):
     """
     Takes the upper left and bottom right points and allows
@@ -45,9 +50,10 @@ class QrLocation(BaseModel):
     upper_left: Point
     bottom_right: Point
 
-    def image_box(self) -> BoundingBox:
-        ul = tuple[int, int](self.upper_left.__dict__.values())
-        br = tuple[int, int](self.bottom_right.__dict__.values())
+    @property
+    def box(self) -> BoundingBox:
+        ul = self.upper_left.coordinates
+        br = self.bottom_right.coordinates
         np_array = np.asarray((ul, br))
         box = BoundingBox(np_array)
         return box

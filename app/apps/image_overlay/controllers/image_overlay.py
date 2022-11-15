@@ -22,7 +22,7 @@ class ImageOverlayController(Controller):
                                  ) -> ResponseImageOverlay:
         img_overlay = ImageOverlay(image_url=data.base_image)
 
-        qr_box = data.qr.location.image_box()
+        qr_box = data.qr.location.box
 
         # Try to shorten the msg if it is an url
         converted_to_url = try_shorten_url(data.qr.msg, state=state, request=request)

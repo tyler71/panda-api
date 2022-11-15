@@ -7,9 +7,10 @@ from ..models import Layer
 
 
 class ImageOverlay:
-    def __init__(self, image_url: str):
+    def __init__(self, image_url: str, *, format='PNG'):
         self.image_url = image_url
         self.image: Image.Image = None
+        self.format = format
 
     def _get_image(self) -> Image.Image:
         if self.image is None:
@@ -24,8 +25,7 @@ class ImageOverlay:
         layered_image = io.BytesIO()
         bg = self._get_image().copy()
         for layer in layers:
-            upper_left = tuple[int, int](layer.upper_left.__dict__.values())
-            bg.paste(layer.img, upper_left, mask=layer.mask)
+            bg.paste(layer.img, layer.upper_left.coordinates, mask=layer.mask)
 
-        bg.save(layered_image, format='PNG')
+        bg.save(layered_image, format=self.format)
         return Image.open(layered_image)

@@ -7,7 +7,6 @@ from PIL import Image
 
 from ..models import Size
 from starlite import Response, HTTPException
-from starlite.status_codes import HTTP_400_BAD_REQUEST
 
 
 class QrGeneration:
@@ -29,6 +28,10 @@ class QrGeneration:
 
     def gen_mask(self):
         pass
+
+    @property
+    def img(self) -> Image.Image:
+        return self.generate()
 
     def generate(self) -> Image.Image:
         # Here we are making the initial qr code image. We want the size of it
