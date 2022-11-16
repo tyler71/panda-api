@@ -20,19 +20,16 @@ class QrCodeController(Controller):
                             request: Request,
                             data: Partial[RequestQrCode],
                             ) -> ResponseQrCode:
+
         converted_to_url = try_shorten_url(data.msg, state=state, request=request)
         output_url = converted_to_url if converted_to_url is not None else data.msg
+
         qr = Qr(msg=output_url, size=data.size, options=data.options, background_image_url=data.background_url)
+
         img_bytes = io.BytesIO()
         qr.img.save(img_bytes, format=qr.format)
         img_bytes.seek(0)
         qr_image_url = state.linx.upload(img_bytes, randomize_filename=True, expiration_seconds=60)
-        # qr = QrGeneration(output_url, data.size, options=data.options, background_image_url=data.background_url)
-        # qr_img = qr.generate()
-        # qr_in_memory = io.BytesIO()
-        # qr_img.save(qr_in_memory, format='png')
-        # qr_in_memory.seek(0)
-
 
         res = ResponseQrCode(
             msg=data.msg,

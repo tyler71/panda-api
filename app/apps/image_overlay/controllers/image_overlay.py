@@ -3,8 +3,8 @@ import io
 from starlite import State, Partial, post, Request
 from starlite.controller import Controller
 
-from ..library import QrGeneration, ImageOverlay
-from ..models import RequestImageOverlay, ResponseImageOverlay, QrLocation, Size, Point, Layer
+from ..library import ImageOverlay
+from ..models import RequestImageOverlay, ResponseImageOverlay, Layer, Qr
 from ...core.library import try_shorten_url
 
 
@@ -22,25 +22,18 @@ class ImageOverlayController(Controller):
                                  ) -> ResponseImageOverlay:
         img_overlay = ImageOverlay(image_url=data.base_image)
 
-        qr_box = data.qr.location.box
-
         # Try to shorten the msg if it is an url
         converted_to_url = try_shorten_url(data.qr.msg, state=state, request=request)
         output_url = converted_to_url if converted_to_url is not None else data.qr.msg
 
-        # Identify the size of the qr code. We're looking to ensure it is scaled high enough
-        # to the desired size.
-        qr_img_size = Size()
-        qr_img_size.width, qr_img_size.height = qr_box.width, qr_box.height
-        qr = QrGeneration(output_url, size=qr_img_size,
-                          background_image_url=data.qr.background_url, **data.qr.options)
-        qr_img = qr.generate()
+        qr = Qr(msg=output_url, size=data.qr.location.size, options=data.qr.options,
+                background_image_url=data.qr.background_url)
 
         # overlay accepts multiple layers and a mask, but here we are just putting in one layer.
         # This may change. The layer we're putting on is the qr code
         layer = Layer()
         layer.__dict__ = {
-            "img": qr_img,
+            "img": qr.img,
             "upper_left": data.qr.location.upper_left
         }
 

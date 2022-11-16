@@ -6,7 +6,7 @@ from PIL import Image
 from UliEngineering.Math.Coordinates import BoundingBox
 from pydantic import BaseModel
 
-from .qr import RequestQrCode
+from .qr import RequestQrCode, Size
 
 
 class Point(BaseModel):
@@ -57,6 +57,12 @@ class QrLocation(BaseModel):
         np_array = np.asarray((ul, br))
         box = BoundingBox(np_array)
         return box
+
+    @property
+    def size(self) -> Size:
+        box = self.box
+        size = Size(width=box.width, height=box.height)
+        return size
 
 
 class QrImageOverlay(BaseModel):
