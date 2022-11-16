@@ -17,26 +17,24 @@ class Size(BaseModel):
 
 
 class Qr:
-    def __init__(self, msg: str, options: dict, *, format='png', background_image_url=None, error='H'):
+    def __init__(self, msg: str, size: Size, options: dict, *, format='png', background_image_url=None, error='H'):
         self.msg = msg
         self.options = options
         self.error = error
         self.format = format
+        self.size = size
         self.background_image_url = background_image_url
         self._img = None
         self._msk = None
         self._scale = None
-        self.QRCode = segno.make(msg, error=error)
+        self.qrcode = segno.make(msg, error=error)
 
     @property
     def scale(self) -> int:
         if self._scale is None:
             qr_data = io.BytesIO()
-            qrcode = self.QRCode
-            qrcode.save(qr_data, kind=self.format, scale=1)
+            self.qrcode.save(qr_data, kind=self.format, scale=1)
             qr = Image.open(qr_data)
-            qr_data.seek(0)
-            qr_data.truncate()
 
             # Now we calculate the scale of the image. We will resize it as well, so we always go one scale up
             qr_scale = math.ceil(self.size.width / qr.size[0])
@@ -59,7 +57,7 @@ class Qr:
             else:
                 self.qrcode.save(qr_data, kind=self.format, scale=self.scale, **self.options)
             qr = Image.open(qr_data)
-            if qr.size != (self.size.width, self.size.height):
+            if qr.size != self.size.size:
                 qr = qr.resize(self.size.size, Image.Resampling.LANCZOS)
 
             self._img = qr

@@ -42,9 +42,9 @@ class Linx:
     def _make_request(self, req: Skel) -> requests.models.Response:
         # cleanup, encode, and complete the request
         if type(req.request) == dict:
-            req.request = {k: v for (k, v) in req.request.items() if v is not None}
+            req.request = {k: str(v) for (k, v) in req.request.items() if v is not None}
         if type(req.headers) == dict:
-            req.headers = {k: v for (k, v) in req.headers.items() if v is not None}
+            req.headers = {k: str(v) for (k, v) in req.headers.items() if v is not None}
 
         if req.method == 'GET':
             result = requests.get(f'{self.domain}{req.endpoint}/{req.request}', headers=req.headers)
@@ -69,9 +69,9 @@ class Linx:
         req = self._get_skel()
         req.headers.update({
             'Linx-Randomize': 'yes' if randomize_filename else None,
-            'Linx-Delete-Key': str(delete_key),
-            'Linx-Access-Key': str(password),
-            'Linx-Expiry': str(expiration_seconds),
+            'Linx-Delete-Key': delete_key,
+            'Linx-Access-Key': password,
+            'Linx-Expiry': expiration_seconds,
             'Content-Disposition': f'attachment; filename={filename}'
         })
 
