@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import json
 import urllib.parse
 
 import requests
@@ -7,6 +8,7 @@ from requests import JSONDecodeError
 import logging
 
 logger = logging.getLogger()
+
 
 class Yourls:
     def __init__(self, domain: str, signature: str, *, method: str = "GET", output: str = 'json'):
@@ -32,7 +34,7 @@ class Yourls:
         # Check if nonce doesn't exist, or if it does exist, check to see if it's expired (greater than n hours)
         if self.nonce is None or unix_timestamp > (
                 self.nonce['timestamp'] + int(
-                datetime.datetime.timestamp(present_date + datetime.timedelta(minutes=55)))):
+            datetime.datetime.timestamp(present_date + datetime.timedelta(minutes=55)))):
             res = hashlib.sha512(f'{unix_timestamp}{self.signature}'.encode())
             self.nonce = {'timestamp': unix_timestamp, 'hash': 'sha512', 'signature': res.hexdigest()}
         return self.nonce
@@ -130,6 +132,54 @@ class YourlsUpdate(Yourls):
             'exactly_once': exactly_once,
         })
         return self._make_request(req)
+
+    # Panda-API
+    # Override shorten
+    def shorten(self, url: str, title: str = None, keyword: str = None) -> requests.models.Response:
+        req = self._get_skel()
+        req.update({
+            'action': 'shorturl',
+            'url': url,
+            'title': title,
+            'keyword': keyword,
+        })
+        res = self._make_request(req)
+
+        r_json = json.loads(res.content)
+        r_json['url']['updatetoken'] = self.generate_token(r_json['url']['keyword'], r_json['url']['date'],
+                                                           r_json['url']['ip'])
+
+        res.__dict__['_content'] = json.dumps(r_json).encode()
+
+        return res
+
+    def token_update_url(self, shorturl, token, new_url, new_title=None, *, hash_method=None) -> bool:
+        verified = self.verify_token(shorturl, token)
+        if verified:
+            self.update(shorturl, new_url, new_title)
+            return True
+
+    def verify_token(self, shorturl, token) -> bool:
+        """
+        Takes provided hash or token, and compares it to server
+        Hash should be of <timestamp><ip><shorturl>
+        """
+        req = self.stats(shorturl)
+        info = req.json()
+        timestamp = info['link']['timestamp']
+        ip = info['link']['ip']
+
+        return self.generate_token(shorturl, timestamp, ip) == token
+
+    def generate_token(self, shorturl, timestamp, ip, hash_method="sha1") -> str:
+        hash_methods = {
+            'md5': hashlib.md5,
+            'sha1': hashlib.sha1,
+            'sha512': hashlib.sha512,
+
+        }
+        res = hash_methods[hash_method](f'{timestamp}{ip}{shorturl}'.encode())
+        return res.hexdigest()
 
 
 class YourlsDelete(Yourls):
