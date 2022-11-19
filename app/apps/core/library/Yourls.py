@@ -28,13 +28,13 @@ class Yourls:
 
     def _sig_timestamp(self) -> dict:
         # Generate the signature + timestamp for the request / short-lived requests
-        present_date = datetime.datetime.now()
+        dt = datetime.datetime
+        present_date = dt.now()
         unix_timestamp = int(datetime.datetime.timestamp(present_date))
 
         # Check if nonce doesn't exist, or if it does exist, check to see if it's expired (greater than n hours)
         if self.nonce is None or unix_timestamp > (
-                self.nonce['timestamp'] + int(
-            datetime.datetime.timestamp(present_date + datetime.timedelta(minutes=55)))):
+                int(dt.timestamp(dt.fromtimestamp(self.nonce['timestamp']) + datetime.timedelta(minutes=55)))):
             res = hashlib.sha512(f'{unix_timestamp}{self.signature}'.encode())
             self.nonce = {'timestamp': unix_timestamp, 'hash': 'sha512', 'signature': res.hexdigest()}
         return self.nonce
