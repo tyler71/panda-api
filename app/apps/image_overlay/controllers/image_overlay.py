@@ -23,8 +23,8 @@ class ImageOverlayController(Controller):
         img_overlay = ImageOverlay(image_url=data.base_image)
 
         # Try to shorten the msg if it is an url
-        converted_to_url = try_shorten_url(data.qr.msg, state=state, request=request)
-        output_url = converted_to_url if converted_to_url is not None else data.qr.msg
+        converted_to_url_response = try_shorten_url(data.qr.msg, state=state, request=request)
+        output_url = converted_to_url_response['shorturl'] if converted_to_url_response is not None else data.qr.msg
 
         qr = Qr(msg=output_url, size=data.qr.location.size, options=data.qr.options,
                 background_image_url=data.qr.background_url)
@@ -46,6 +46,7 @@ class ImageOverlayController(Controller):
         layered_image_url = state.linx.upload(layered_img_bytes, randomize_filename=True)
 
         res = ResponseImageOverlay(
-            image_url=layered_image_url.json()['direct_url']
+            image_url=layered_image_url.json()['direct_url'],
+            update_token=converted_to_url_response['url']['update_token']
         )
         return res

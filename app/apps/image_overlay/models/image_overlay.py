@@ -79,3 +79,4 @@ class RequestImageOverlay(BaseModel):
 
 class ResponseImageOverlay(BaseModel):
     image_url: str
+    update_token: str

@@ -146,8 +146,8 @@ class YourlsUpdate(Yourls):
         res = self._make_request(req)
 
         r_json = json.loads(res.content)
-        r_json['url']['updatetoken'] = self.generate_token(r_json['url']['keyword'], r_json['url']['date'],
-                                                           r_json['url']['ip'])
+        r_json['url']['update_token'] = self.generate_token(r_json['url']['keyword'], r_json['url']['date'],
+                                                            r_json['url']['ip'])
 
         res.__dict__['_content'] = json.dumps(r_json).encode()
 
@@ -157,7 +157,7 @@ class YourlsUpdate(Yourls):
         verified = self.verify_token(shorturl, token)
         if verified:
             self.update(shorturl, new_url, new_title)
-            return True
+        return verified
 
     def verify_token(self, shorturl, token) -> bool:
         """

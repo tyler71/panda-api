@@ -75,6 +75,18 @@ class RequestQrCode(BaseModel):
 class ResponseQrCode(BaseModel):
     msg: str
     original_msg: str = None
+    update_token: str = None
     size: Size = None
     options: dict = None
     image_url: str = None
+
+
+class RequestQrUrlUpdate(BaseModel):
+    shorturl: str
+    token: str
+    new_url: str
+    new_title: str = None
+
+
+class ResponseQrUrlUpdate(BaseModel):
+    success: bool

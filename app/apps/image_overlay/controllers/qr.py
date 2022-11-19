@@ -1,13 +1,9 @@
 import io
-from urllib.parse import urlparse
 
-from requests import JSONDecodeError
-from starlite import State, Partial, post, Request
+from starlite import State, Partial, post, Request, patch
 from starlite.controller import Controller
 
-from ..library import QrGeneration
-from ..models import RequestQrCode, ResponseQrCode, Size, Qr
-
+from ..models import RequestQrCode, ResponseQrCode, Qr, RequestQrUrlUpdate, ResponseQrUrlUpdate
 from ...core.library import try_shorten_url
 
 
@@ -20,9 +16,8 @@ class QrCodeController(Controller):
                             request: Request,
                             data: Partial[RequestQrCode],
                             ) -> ResponseQrCode:
-
-        converted_to_url = try_shorten_url(data.msg, state=state, request=request)
-        output_url = converted_to_url if converted_to_url is not None else data.msg
+        converted_to_url_response = try_shorten_url(data.msg, state=state, request=request)
+        output_url = converted_to_url_response['shorturl'] if converted_to_url_response is not None else data.msg
 
         qr = Qr(msg=output_url, size=data.size, options=data.options, background_image_url=data.background_url)
 
@@ -34,10 +29,22 @@ class QrCodeController(Controller):
         res = ResponseQrCode(
             msg=data.msg,
             options=data.options,
-            image_url=qr_image_url.json()['direct_url']
+            image_url=qr_image_url.json()['direct_url'],
+            update_token=converted_to_url_response['url']['update_token']
         )
-        if converted_to_url is not None:
+        if converted_to_url_response is not None:
             res.original_msg = data.msg
-            res.msg = converted_to_url
+            res.msg = output_url
 
+        return res
+
+    @patch("/url")
+    async def update_url(self,
+                         state: State,
+                         request: Request,
+                         data: Partial[RequestQrUrlUpdate]
+                         ) -> ResponseQrUrlUpdate:
+        result = state.yourls.token_update_url(shorturl=data.shorturl, token=data.token,
+                                               new_url=data.new_url, new_title=data.new_title)
+        res = ResponseQrUrlUpdate(success=result)
         return res
