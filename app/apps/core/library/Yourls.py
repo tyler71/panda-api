@@ -165,11 +165,14 @@ class YourlsUpdate(Yourls):
         Hash should be of <timestamp><ip><shorturl>
         """
         req = self.stats(shorturl)
-        info = req.json()
-        timestamp = info['link']['timestamp']
-        ip = info['link']['ip']
+        if req.status_code == 200:
+            info = req.json()
+            timestamp = info['link']['timestamp']
+            ip = info['link']['ip']
 
-        return self.generate_token(shorturl, timestamp, ip) == token
+            return self.generate_token(shorturl, timestamp, ip) == token
+        else:
+            logging.critical(f"yourls verify_token: {req.content}")
 
     def generate_token(self, shorturl, timestamp, ip, hash_method="sha1") -> str:
         hash_methods = {
