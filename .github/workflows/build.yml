@@ -1,4 +1,4 @@
-name: Build and deploy to flyio
+name: Build and push to registry
 
 on:
 # create:
